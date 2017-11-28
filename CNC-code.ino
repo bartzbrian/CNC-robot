@@ -152,7 +152,10 @@ void loop() {
   }
   
   if(desiredPosition >= 0){    
-    gotoPosition(0);
+    // goto the desired spot in the position array
+    // for now it is just a huge number, and each time that huge number is hit
+    // we tell the CNC to move to the next pair of x,y coordinates 
+    gotoPosition(desiredPosition);
   }
   
   someCounterThatWillBeReplacedBySequencer ++;
