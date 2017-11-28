@@ -121,7 +121,9 @@ void loop() {
     
     // abort measuring since we hit a limit
     if( pulseResult == -1 ){
+      // this will abort the measuring condition in the next loop
       measuringX = false;
+      // the head is now at the max pulse length
       currentPositionX = XpulseLength;
       
       // TODO: make these editable/nudgeable
