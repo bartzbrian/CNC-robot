@@ -122,7 +122,7 @@ void loop() {
     // abort measuring since we hit a limit
     if( pulseResult == -1 ){
       measuringX = false;
-      currentPositionX = measuringX;
+      currentPositionX = XpulseLength;
       
       // TODO: make these editable/nudgeable
       positions[0][0] = Math.floor(XpulseLength * .3333);
