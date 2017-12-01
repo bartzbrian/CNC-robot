@@ -4,14 +4,14 @@ const int Xdirection = 7;
 const int XlimitMin = 2;
 const int XlimitMax = 3;
 long XpulseLength = 0;
-int currentPositionX = -1;
+long currentPositionX = -1;
 
 unsigned long previous_time_x = 0;
 unsigned long current_time_x = 0;
 
 boolean measuringX = true;
 boolean resettingX = true;
-int xDirection = 0;
+int dirX = 0;
 
 // initialize with -1 to say it is still invalid 
 int desiredPosition = -1;
@@ -19,7 +19,7 @@ int desiredPosition = -1;
 int someCounterThatWillBeReplacedBySequencer = 0;
 
 // example values only obviously it would be more than 100 pulses
-int positions[9][2];
+long positions[9][2];
 //= 
 //{ 
 //    // row 1
@@ -57,8 +57,11 @@ void setup() {
 }
 
 void setDirectionX(int dir){
-  xDirection = dir;
-  digitalWrite(Xdirection,xDirection);
+  if( dir != dirX){
+    dirX = dir;
+    digitalWrite(Xdirection,dirX);
+  }
+  
 }
 
 void resetX() {
@@ -82,9 +85,10 @@ int pulseX() {
   
   
   // safetyMin
-  if( xDirection == 0 && digitalRead(XlimitMin) ){
+  if( dirX == 0 && digitalRead(XlimitMin) ){
+    
     return -1;
-  } else if( xDirection == 1 ){
+  } else if( dirX == 1 ){
     maxX = digitalRead(XlimitMax);
     if( maxX ==1 && prevLimitMax == 1 ){
       return -1;
@@ -148,9 +152,10 @@ void loop() {
     
     int pulseResult = pulseX();
     
+    
     if( pulseResult >= 0 ){
        // measure ACTUAL pulses sent
-       XpulseLength += pulseX();
+       XpulseLength += pulseResult;
     }
 
     
@@ -162,7 +167,7 @@ void loop() {
       currentPositionX = XpulseLength;
       
       // TODO: make these editable/nudgeable
-      positions[0][0] = round(XpulseLength * .3333);
+      positions[0][0] = (XpulseLength * .3333);
       positions[1][0] = floor(XpulseLength * .5);
       positions[2][0] = floor(XpulseLength * .6666);
       // 2nd row
@@ -190,31 +195,32 @@ void loop() {
 //    desiredPosition ++;
 //  }
   
-  if(desiredPosition >= 0){    
+  if(desiredPosition >= 0){  
+   
     // goto the desired spot in the position array
     // for now it is just a huge number, and each time that huge number is hit
     // we tell the CNC to move to the next pair of x,y coordinates 
     gotoPosition(desiredPosition);
   }
   
-  someCounterThatWillBeReplacedBySequencer ++;
+  // someCounterThatWillBeReplacedBySequencer ++;
 }
 
 void gotoPosition(int pos){
   
-  int targetX = positions[pos][0];
-  int targetY = positions[pos][1];
-  
-  // naive way for now. it might vibrate. i'll see if you can come up with a quick way to unvibrate it.
+  long targetX = positions[pos][0];
+
   if(currentPositionX > targetX){
-    setDirectionX(0);
+     setDirectionX(0);  
     // decrement the position by pulse result
     currentPositionX -= pulseX();
+  
   }
-  if(currentPositionX < targetX){
-    setDirectionX(1);
-    // increment the position by pulse result
-    currentPositionX += pulseX();
-  }
+//  if(currentPositionX < targetX){
+//    Serial.println("move 1");
+//    setDirectionX(1);
+//    // increment the position by pulse result
+//    currentPositionX += pulseX();
+//  }
 }
 
