@@ -86,13 +86,11 @@ int pulseX() {
     return 1;
 
   }
-  
-//int gotoPosition(int pos){
-//  
-//}
 
+//calculates positions from length, then moves to those positions in sequence with 1 second delay between
 void loop() { 
   
+    //calc positions
     if (calculatingPositions){
       
         positions[0][0] = (XpulseLength * .3333);
@@ -104,7 +102,8 @@ void loop() {
         calculatingTargetPosition = 1;
         
       }
-
+  
+    //decides next position to move to and sets direction based on where it is and where it is going
     if (calculatingTargetPosition){
       
       if (positionCounter > 2){//resets the sequence for now
@@ -112,7 +111,7 @@ void loop() {
         }
         
       targetPos = positions[positionCounter][0]; //set the new target position
-      calculatingTargetPosition = 0; //causes this to not get 
+      calculatingTargetPosition = 0; //makes this section only called between position movements
       positionCounter++;
       movingToTarget = 1;
       
@@ -130,10 +129,11 @@ void loop() {
       Serial.println(dirX);
         
     }
-    
+  
+   //moves to target by pulsing and comparing current position to target. Also will kill loop if switch gets hit.
    if (movingToTarget){
     
-      if (targetPos == currentPositionX){
+      if (targetPos == currentPositionX){ //if location reached, break out and get new target position.
           calculatingTargetPosition = 1;
           movingToTarget = 0;
           Serial.println("done moving to this position");
